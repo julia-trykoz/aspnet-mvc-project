@@ -1,0 +1,182 @@
+﻿@model ReviewsProject.Models.ReviewModel
+@{
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+@section styles{
+    <link href="~/Content/review.css" rel="stylesheet" />
+}
+    <!--Vendor block-->
+    <div class="row vendor">
+        <div class="col-lg-2 col-img">
+            <img src="/images/@Model.Vendor.PhotoUrl" class="img-circle" />
+        </div>
+        <div class="col-lg-10 col-data">
+                <p class="name">@Model.Vendor.BusinessName</p>
+                <p class="text-muted">@Model.Vendor.City, @Model.Vendor.State @Model.Vendor.ZipCode</p>
+                <p><a href="@Model.Vendor.Url">@Model.Vendor.UrlName</a></p>
+            </div>
+    </div>
+    @using (Html.BeginForm("SendReview", "Review", FormMethod.Post, new { enctype = "multipart/form-data", id = "formReview" }))
+    {
+        @Html.HiddenFor(el=>el.Vendor.Id)
+        <!--Rating-->
+        <div class="row rating">
+            <label class="col-lg-3 col-label">Quality of Service</label>
+            <div class="col-lg-5 col-rating">
+                @Html.Partial("_RatingControl","Quality") 
+            </div>
+         </div>
+
+        <div class="row rating">
+            <label class="col-lg-3 col-label">Responsiveness</label>
+            <div class="col-lg-5 col-rating">
+                @Html.Partial("_RatingControl", "Responsiveness")
+            </div>
+        </div>
+
+        <div class="row rating">
+            <label class="col-lg-3 col-label">Professionalism</label>
+            <div class="col-lg-5 col-rating">
+                @Html.Partial("_RatingControl", "Professionalism")
+            </div>
+        </div>
+
+        <div class="row rating">
+            <label class="col-lg-3 col-label">Value</label>
+            <div class="col-lg-5 col-rating">
+                @Html.Partial("_RatingControl", "Value")
+            </div>
+        </div>
+
+        <div class="row rating">
+            <label class="col-lg-3 col-label">Flexibility</label>
+            <div class="col-lg-5 col-rating">
+                @Html.Partial("_RatingControl", "Flexibility")
+            </div>
+        </div>
+
+        <div class="row rating">
+            <label class="col-lg-3 col-overall">Overall Rating</label>
+            <label class="col-lg-3 avg-rating">
+              <span id="avgRating">0.0</span>/5.0
+            </label>
+        </div>
+
+        <!--Review Description-->
+        <div class="row">
+            <div class="col-lg-12 review">
+                @Html.TextAreaFor(el => el.ReviewDescription, new {@class="form-control", placeholder = "Share your experience! Your review helps other couples choose their vendor team." })
+                @Html.ValidationMessageFor(el => el.ReviewDescription, "", new { @class = "text-danger" })
+            </div>
+           
+         </div>
+
+         <!--Share photos-->
+         <div class="row photos">
+             <div class="col-lg-12">
+                 <h3>
+                     <p>Share Photos</p>
+                     <small><p>Include some images with your review to give other couples additional examples of this vendor's past work.</p></small>
+                 </h3>
+             </div>
+         </div>
+        <div class="row images">
+            <div class="col-sm-2 image-add">
+                <label>
+                    <img src="~/content/image/addPhoto.png" alt="..." class="img-fluid">
+                    <input id="addImage" type="file" multiple>
+                </label>
+            </div>
+        </div>
+        <div class="row">
+            <label class="col-md-5 control-label">How mach did you spend with this vendor?
+            <span class="badge info" title="Enter amount please">?</span></label>
+            <div class="col-md-3">
+                <div class="input-group">
+                    <span class="input-group-addon">$</span>
+                    @Html.TextBoxFor(el => el.Spend, new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(el => el.Spend, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="row">
+            <label class="col-md-5 control-label">Your Email
+            <span class="badge" title="Enter your email please">?</span></label>
+            <div class="col-md-3">
+                @Html.TextBoxFor(el=>el.Email, new { @class = "form-control" })
+                @Html.ValidationMessageFor(el=>el.Email, "", new { @class = "text-danger" })
+            </div>       
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-muted text-center">By submitting this review, I agree to WeddingWire's <a href="#">Terms of Use</a> and certify 
+            that I conducted business with this vendor and can provide a signed contract or proof of payment.
+           
+            </div>
+        </div>
+        <div class="row text-center">
+            <input id="btnSubmit" type="submit" class="btn btn-info" value="Submit Review"/>
+        </div>
+    }
+<!--Modal dialog-->
+@Html.Partial("_ModalDialog", new KeyValuePair<string, string>("Review", "Thank You For Your Submission!"))
+
+<!--Sign In Or Sign Up Dialog-->
+@Html.Partial("_LoginRegisterModal")
+
+@section scripts{
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/uploadfile")
+@Scripts.Render("~/bundles/jqueryajax")
+
+<script type="text/javascript" src="/Scripts/fileupload.js"></script>
+<script type="text/javascript" src="/Scripts/rating.js"></script>
+<script type="text/javascript">
+    //submit form if user authenticated
+    function success() {
+        var elem = $('input[name="authenticated"]');
+        if ($(elem).length > 0) {
+            $('#signup').modal('hide');
+            $('#formReview').submit();
+        } 
+    }
+
+$(function () {
+    //initializing file uploading
+    fileUploadInitialize('#addImage', '/Review/Upload', function (data) {
+        if (data.result.isUploaded) {
+            $('#formReview').append('<input type="hidden" name="Files[' + $('input[name^="Files["]').length + ']" value="' + data.result.filename + '"/>');
+            $('.image-add').before('<div class="col-sm-2">\
+            <img src="'+ data.result.filePath + '" class="img-fluid" alt= "" >\
+            <div class="image-del">\
+            <i class="far fa-trash-alt"></i>\
+            </div>\
+            </div>');
+        }
+    });
+
+    //show modal dialogs
+    $('#btnSubmit').click(function (e) {
+        if ($("#formReview").valid()) {
+            e.preventDefault();
+            if ('@User.Identity.IsAuthenticated'.toLowerCase() == 'true')
+                $('#msg').modal('show');
+            else 
+                $('#signup').modal('show');
+         }
+     });
+     $('#btnOk').click(function () {
+        $('#msg').modal('hide');
+        $('#formReview').submit();
+      });
+      $('#btnClose').click(function () {
+          $('#signup').modal('hide');
+       });
+    //initializing datepicker
+      $('.col-datepicker').datetimepicker({ format: 'MM/DD/YYYY' });
+
+    });
+</script>
+}
+
+

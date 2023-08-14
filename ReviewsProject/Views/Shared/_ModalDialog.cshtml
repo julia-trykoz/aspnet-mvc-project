@@ -1,0 +1,18 @@
+﻿@model KeyValuePair<string, string>
+
+<div id="msg" class="modal fade" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">@Model.Key</h4>
+            </div>
+            <div class="modal-body">
+                <p>@Model.Value</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="btnOk">Ok</button>
+            </div>
+        </div>
+
+    </div>
+</div>

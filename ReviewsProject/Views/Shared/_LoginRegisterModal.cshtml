@@ -1,0 +1,41 @@
+﻿<div class="modal fade" id="signup" role="dialog">
+    <div class="modal-dialog login">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <h3 class="text-primary">Sign In</h3>
+                    </div>
+                    <div class="col-lg-6">
+                        <h3 class="text-primary">Sign Up</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="row row-divided">
+                    <div class="col-lg-6">
+                        @using (Ajax.BeginForm("LoginPartial", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "form", InsertionMode = InsertionMode.Replace, OnSuccess = "success" }, new { @class = "form-horizontal", role = "form" }))
+                        {
+                            <div id="form">
+                                @Html.Partial("_LoginForm", new ReviewsProject.Models.LoginViewModel())
+                            </div>
+                        }
+                    </div>
+                    <div class="vertical-divider">or</div>
+                    <div class="col-lg-6">
+                        @using (Ajax.BeginForm("RegisterPartial", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "form2", InsertionMode = InsertionMode.Replace, OnSuccess = "success" }, new { @class = "form-horizontal", role = "form" }))
+                        {
+                          
+                                @Html.Partial("_RegistrationForm", new ReviewsProject.Models.CustomRegisterViewModel())
+                           
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnClose" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

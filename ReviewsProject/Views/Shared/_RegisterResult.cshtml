@@ -1,0 +1,8 @@
+﻿@model ReviewsProject.Models.CustomRegisterViewModel
+
+@if (ViewBag.IsAuthenticated != null)
+{
+    @Html.Hidden("authenticated", "true")
+}
+@Html.ValidationSummary("", new { @class = "text-danger" })
+
